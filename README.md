@@ -66,10 +66,6 @@ This alignment is achieved through a **contrastive loss** objective — bringing
   <img src="figures/CLIP1.png" width="100%">
 </p>
 
-<p align="center">
-  <img src="figures/clip2.jpg" width="100%">
-</p>
-
 ---
 
 ### How CLIP Works: Training and Inference
@@ -82,6 +78,10 @@ During training, CLIP learns to associate images and captions from the **WebImag
 - **Input:** Paired images and captions collected from the internet.  
 - **Objective:** Bring matching pairs closer in the embedding space and push mismatched ones apart.  
 - **Result:** A unified vision–language space where semantic meaning can be measured by proximity.
+
+<p align="center">
+  <img src="figures/clip2.jpg" width="100%">
+</p>
 
 ---
 
@@ -140,8 +140,10 @@ See `clip_demo.ipynb` for a full demonstration using a pre-trained CLIP model.
 
 #### Image–Text Similarity Computation
 - Two input images (`kiki` and `kiki2`) show the same cat (“Kiki”) in different states — curled up and yawning.  
-- The model encodes each image and a set of descriptive text prompts.  
-- Both image and text embeddings are projected into a shared latent space, and cosine similarity is computed.
+- The model encodes each image and a set of descriptive text prompts (e.g., *“a photo of a sleeping cat”*, *“a photo of a cat yawning”*).  
+- Both the image and text are converted into **embedding vectors** — numerical representations of meaning — in the same shared space.  
+- CLIP then computes the **cosine similarity** between the image vector and each text vector, which measures how closely they point in the same direction.  
+- A higher cosine similarity means stronger alignment — in this case, the yawning photo aligns most with the phrase *“a photo of a cat yawning.”*
 
 <p align="center">
   <img src="figures/kiki.png" width="100%" alt="Input images used in the CLIP demo">
