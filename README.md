@@ -27,7 +27,7 @@ This creates a **shared semantic space** where meaning can be measured by proxim
 As a result, CLIP can perform **zero-shot classification** — classifying new images using only text descriptions, without any labeled data.
 
 <p align="center">
-  <img src="figures/clip_framework.png" width="600" alt="CLIP Framework: Vision and Text Encoders trained via Contrastive Loss">
+  <img src="figures/CLIP.png" width="600" alt="CLIP Framework: Vision and Text Encoders trained via Contrastive Loss">
 </p>
 
 ---
