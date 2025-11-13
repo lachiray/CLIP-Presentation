@@ -102,21 +102,23 @@ This is where CLIP demonstrates its ability to generalize to entirely new catego
 
 ```python
 # Given a batch of N (image, text) pairs
-I_f = image_encoder(images)      # Extract visual features [N, D]
-T_f = text_encoder(texts)        # Extract text features [N, D]
+I_f = image_encoder(images)      # Extract visual features -> [N, D]
+T_f = text_encoder(texts)        # Extract text features  -> [N, D]
 
-# Normalize embeddings
+# Normalize embeddings to unit length (so dot product = cosine similarity)
 I_e = normalize(I_f)
 T_e = normalize(T_f)
 
-# Compute similarity matrix
-logits = (I_e @ T_e.T) * exp(t)  # Temperature-scaled cosine similarities
-labels = arange(N)
+# Compute cosine similarity matrix between every image and every text
+# Shape: [N, N] where logits[i][j] = similarity between image i and text j
+logits = (I_e @ T_e.T) * exp(t)   # Temperature-scaled cosine similarities
+labels = arange(N)                # True pair indices (diagonal matches)
 
-# Symmetric contrastive loss
-loss_i = CrossEntropyLoss(logits, labels)
-loss_t = CrossEntropyLoss(logits.T, labels)
-loss = (loss_i + loss_t) / 2
+# Compute symmetric contrastive loss
+loss_i = CrossEntropyLoss(logits, labels)     # Image-to-text
+loss_t = CrossEntropyLoss(logits.T, labels)   # Text-to-image
+loss = (loss_i + loss_t) / 2                  # Average the two directions
+
 ```
 
 **Key Differences from Prior Work:**
