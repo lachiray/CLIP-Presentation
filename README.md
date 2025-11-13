@@ -24,46 +24,6 @@ It trains two encoders:
 Each encoder outputs an embedding — a numerical representation — and CLIP’s training objective is to **align** matching image and text embeddings while separating mismatched ones.  
 This creates a **shared semantic space** where meaning can be measured by proximity.
 
-As a result, CLIP can perform **zero-shot classification** — classifying new images using only text descriptions, without any labeled data.
-
-<p align="center">
-  <img src="figures/CLIP.png" width="600" alt="CLIP Framework: Vision and Text Encoders trained via Contrastive Loss">
-</p>
-
----
-
-### How CLIP Works: Training vs. Inference
-
-CLIP has two encoders — one for **images** and one for **text** — that both output embeddings in the same shared space.  
-During **training**, it learns from paired image–text examples.  
-During **inference**, it can be used flexibly with just an image, just text, or both.
-
-#### Training Phase
-- Input: Paired images and captions from the WebImageText dataset.  
-- Objective: Bring matching pairs closer and push mismatched ones apart.  
-- Result: A unified embedding space where vision and language align.
-
-<p align="center">
-  <img src="figures/clip_training.png" width="600" alt="CLIP training phase using paired image and text inputs with contrastive learning">
-</p>
-
-#### Inference Phase
-Once trained, CLIP can perform a range of tasks using this shared space.
-
-| Task | Input | What CLIP Does |
-|------|--------|----------------|
-| **Zero-shot Classification** | Image + list of text prompts | Finds which caption best matches the image. |
-| **Text-to-Image Search** | Text query + gallery of images | Finds images that best match the description. |
-| **Image Similarity** | Two or more images | Finds which images are visually or semantically similar. |
-
-<p align="center">
-  <img src="figures/clip_inference.png" width="600" alt="CLIP inference: using image or text inputs flexibly">
-</p>
-
-**In simpler terms:**  
-During training, CLIP learns *how* images and text relate.  
-During inference, it applies that knowledge — allowing you to give it an image or a piece of text and still make meaningful comparisons.
-
 ---
 
 ### Real-World Example: Why CLIP is Useful
@@ -88,26 +48,53 @@ This shift represented a turning point in AI.
 By replacing human-curated labels with **natural language supervision**, CLIP enabled true **zero-shot generalization** — recognizing new concepts simply through text.  
 It became the blueprint for multimodal foundation models like **DALL·E**, **Flamingo**, and **GPT-4V (GPT-4 with Vision)**.
 
+---
+
+## 2. Architecture Overview and Training Process
+
+CLIP’s architecture is built around two jointly trained encoders:
+
+1. **Image Encoder** — extracts a visual embedding from an input image.  
+   - Backbone: ResNet-50 or Vision Transformer (ViT-B/32).  
+2. **Text Encoder** — extracts a semantic embedding from a text prompt.  
+   - Backbone: 12-layer Transformer (similar to GPT-2 small).
+
+Both encoders project their inputs into a **shared embedding space**, where the similarity between an image and a caption is measured by **cosine similarity**.  
+This alignment is achieved through a **contrastive loss** objective — bringing paired image–text embeddings closer together and pushing apart mismatched ones.
+
 <p align="center">
-  <img src="figures/clip_motivation.png" width="600" alt="Motivation behind CLIP: learning from text instead of fixed labels">
+  <img src="figures/CLIP1.png" width="100%">
+</p>
+
+<p align="center">
+  <img src="figures/clip2.png" width="100%">
 </p>
 
 ---
 
-## 2. Architecture Overview
+### How CLIP Works: Training and Inference
 
-CLIP consists of two main components trained jointly:
-1. **Image Encoder** — extracts a visual embedding from an input image.  
-   - Backbone: ResNet-50 or Vision Transformer (ViT-B/32).  
-2. **Text Encoder** — extracts a semantic embedding from a text prompt.  
-   - Backbone: 12-layer Transformer (same architecture as GPT-2 small).
+CLIP first learns by pairing images and text during training, and then uses that learned understanding during inference to recognize or retrieve new images it’s never seen before.
 
-Both encoders map their inputs into a **shared embedding space**, where similarity between an image and a caption is measured by the **cosine similarity** of their embeddings.  
-During training, CLIP uses a **contrastive loss** that maximizes agreement between corresponding image–text pairs and minimizes it for mismatched ones.
+#### Training Phase
+During training, CLIP learns to associate images and captions from the **WebImageText (WIT)** dataset.
 
-<p align="center">
-  <img src="figures/clip_architecture.png" width="650" alt="CLIP Architecture showing dual encoders and shared embedding space">
-</p>
+- **Input:** Paired images and captions collected from the internet.  
+- **Objective:** Bring matching pairs closer in the embedding space and push mismatched ones apart.  
+- **Result:** A unified vision–language space where semantic meaning can be measured by proximity.
+
+---
+
+#### Inference Phase
+Once trained, CLIP’s parameters are **frozen** — no more learning occurs.  
+Instead, it uses its learned vision–language alignment to perform a variety of **zero-shot tasks**.  
+This is where CLIP demonstrates its ability to generalize to entirely new categories without retraining.
+
+| **Task** | **Input** | **What CLIP Does** |
+|:--|:--|:--|
+| **Zero-shot Classification** | Image + list of text prompts | Finds which caption best matches the image. |
+| **Text-to-Image Search** | Text query + gallery of images | Finds images that best match the description. |
+| **Image Similarity** | Two or more images | Finds which images are visually or semantically similar. |
 
 ---
 
@@ -157,7 +144,7 @@ See `clip_demo.ipynb` for a full demonstration using a pre-trained CLIP model.
 - Both image and text embeddings are projected into a shared latent space, and cosine similarity is computed.
 
 <p align="center">
-  <img src="figures/kiki.png" width="600" alt="Input images used in the CLIP demo">
+  <img src="figures/kiki.png" width="100%" alt="Input images used in the CLIP demo">
 </p>
 
 #### Zero-Shot Classification Example
@@ -172,7 +159,7 @@ See `clip_demo.ipynb` for a full demonstration using a pre-trained CLIP model.
 - This demonstrates CLIP’s ability to recognize both **objects** and **actions** (yawning vs. sleeping) without any fine-tuning.
 
 <p align="center">
-<img src="figures/output.png" width="600" alt="CLIP demo output showing probability distribution">
+<img src="figures/output.png" width="100%" alt="CLIP demo output showing probability distribution">
 </p>
 
 #### Key Takeaways
