@@ -48,71 +48,46 @@ loss = (loss_i + loss_t) / 2
 
 ---
 
-## 3. Interactive Demo: CLIP with Pre-trained Model
+## Code Demonstration
 
 See `clip_demo.ipynb` for a full demonstration using a pre-trained CLIP model.
 
 ### What the Demo Shows
 
-1. **Loading Pre-trained CLIP Model**
-   - Loads OpenAI’s CLIP ViT-B/32 model
-   - Architecture: Vision Transformer (image encoder) + Transformer (text encoder)
-   - Joint embedding dimension: 512
+#### Loading Pre-trained CLIP Model
+- Loads OpenAI’s CLIP ViT-B/32 model.  
+- Architecture: Vision Transformer (image encoder) + Transformer (text encoder).  
+- Joint embedding dimension: 512.  
+- Enables zero-shot evaluation on any image–text pair.
 
-2. **Image–Text Similarity Computation**
-   - Preprocesses image and text prompts.
-   - Projects both into shared embedding space.
-   - Computes cosine similarity and outputs probabilities.
+#### Image–Text Similarity Computation
+- Two input images (`kiki` and `kiki2`) show the same cat (“Kiki”) in different states — curled up and yawning.  
+- The model encodes each image and a set of descriptive text prompts.  
+- Both image and text embeddings are projected into a shared latent space, and cosine similarity is computed.
 
-3. **Zero-Shot Classification Example**
-   - Evaluates an image against textual labels: ["a photo of a cat", "a photo of a dog"].
-   - Returns probability distribution over text prompts.
+<p align="center">
+  <img src="figures/kiki.png" width="600" alt="Input images used in the CLIP demo">
+</p>
 
-### Sample Code
-```python
-import torch, clip
-from PIL import Image
+#### Zero-Shot Classification Example
+- Each image is evaluated against natural-language prompts such as:
+["a photo of a cat yawning",
+"a photo of a sleeping cat",
+"a photo of a cat sitting",
+"a photo of a dog",
+"a photo of a tiger"]
 
-model, preprocess = clip.load("ViT-B/32")
+- CLIP outputs probability distributions for how well each text description matches the image.  
+- This demonstrates CLIP’s ability to recognize both **objects** and **actions** (yawning vs. sleeping) without any fine-tuning.
 
-# Example inputs
-image = preprocess(Image.open("figures/temp_cat.jpg")).unsqueeze(0)
-text = clip.tokenize(["a photo of a cat", "a photo of a dog"])
+<p align="center">
+<img src="figures/output.png" width="600" alt="CLIP demo output showing probability distribution">
+</p>
 
-with torch.no_grad():
-    logits_per_image, logits_per_text = model(image, text)
-    probs = logits_per_image.softmax(dim=-1).cpu().numpy()
-
-print("Label probabilities:")
-print("Cat:", round(probs[0][0]*100, 2), "%")
-print("Dog:", round(probs[0][1]*100, 2), "%")
-```
-
-### Sample Output
-```
-CLIP Demo
-============================================================
-1. Loading Pre-trained Model
-------------------------------------------------------------
-✓ Loaded pre-trained CLIP ViT-B/32 model
-  - Embedding dimension: 512
-  - Vision encoder: ViT-B/32
-  - Text encoder: Transformer (12 layers)
-
-2. Demonstrating Zero-Shot Classification
-------------------------------------------------------------
-Image: cat.jpg
-Text prompts: ["a photo of a cat", "a photo of a dog"]
-Predictions:
-  1. a photo of a cat  99.12%
-  2. a photo of a dog   0.88%
-
-3. Key Concepts Illustrated
-------------------------------------------------------------
-- Contrastive learning objective aligns visual and textual modalities.
-- Model generalizes across 30+ vision benchmarks without fine-tuning.
-- Prompts define tasks dynamically through natural language.
-```
+#### Key Takeaways
+- CLIP aligns visual and linguistic representations through contrastive learning.  
+- It generalizes beyond fixed labels, interpreting images using flexible natural-language descriptions.  
+- The demo illustrates how CLIP captures semantic nuance — understanding that both photos depict a *cat*, yet identifying distinct behaviors purely from text context.
 
 ---
 
