@@ -121,10 +121,17 @@ loss = (loss_i + loss_t) / 2                  # Average the two directions
 
 ```
 
-**Key Differences from Prior Work:**
-- Uses **contrastive objectives** instead of classification or caption prediction.
-- Constructs a **joint embedding space** across vision and language.
-- Leverages **prompt engineering** (e.g., “a photo of a {label}”) to improve zero-shot generalization.
+**Key Differences from Prior Work**
+
+- **Uses contrastive learning** instead of classification or caption prediction.  
+  CLIP doesn’t predict a label or generate text — it learns by comparing which image–text pairs match and which don’t.
+
+- **Builds a joint embedding space** that aligns vision and language.  
+  Both images and text are mapped into the same space, where semantic similarity can be measured directly using cosine similarity.
+
+- **Applies prompt engineering** to phrase text inputs in natural language.  
+  Instead of using a single label like *“cat”*, CLIP performs better when prompts resemble real captions such as *“a photo of a cat.”*  
+  This mirrors the language style it saw during training and greatly improves zero-shot accuracy.
 
 ---
 
@@ -188,7 +195,8 @@ The paper also gave little attention to **interpretability** — we still don’
 
 **Limitations:**  
 CLIP struggles in **specialized domains** (e.g., medical or satellite imagery) and lacks domain-specific reasoning.  
-Its closed-source dataset (WebImageText) also prevented reproducibility, later addressed by **OpenCLIP (LAION-5B)** which showed that **data quality matters more than quantity**.
+Its closed-source dataset (WebImageText) also prevented reproducibility, later addressed by **OpenCLIP (LAION-5B)**, which showed that **data quality matters more than quantity** — what matters is how *relevant*, *accurate*, and *well-matched* those pairs are.  
+The LAION team found that carefully filtering noisy web data (e.g., removing mismatched or low-quality captions) led to better alignment and performance than just scaling up dataset size alone.
 
 **Disputes and Follow-Ups:**  
 Other teams expanded or challenged CLIP’s findings:  
@@ -227,26 +235,8 @@ It bridged the gap between vision and language — a shift that continues to def
 
 ## 6. Questions for Discussion
 
-**Q1 – Conceptual:**  
-Is CLIP an *unsupervised* model, or does its use of natural language captions still count as *supervision*?  
-→ *Discuss where “natural language supervision” fits on the spectrum between supervised and unsupervised learning.*
+**Q1. Why does CLIP’s *contrastive training objective* enable better generalization than traditional classification training?** 
 
-<details>
-<summary><strong>💡 Reveal Answer</strong></summary>
-
-CLIP is **not truly unsupervised** — it uses **text as a form of supervision**, because every image is paired with a caption during training.  
-However, it’s also **not traditionally supervised**, since those captions are *free-form natural language*, not fixed category labels.  
-
-This middle ground is often called **natural language supervision**.  
-It allows CLIP to learn about visual concepts and relationships without ever being explicitly told “this is class #27 — cat.”  
-By leveraging the structure of human language, CLIP generalizes far beyond the training categories — enabling **zero-shot recognition** and **open-vocabulary understanding**.
-
-</details>
-
----
-
-**Q2 – Mechanistic Understanding:**  
-Why does CLIP’s *contrastive training objective* enable better generalization than traditional classification training?  
 → *What is the key advantage of learning relationships between image–text pairs instead of predicting a single label per image?*
 
 <details>
@@ -261,6 +251,20 @@ When you ask DALL·E to generate *“a dinosaur wearing sunglasses riding a skat
 That relational understanding is exactly what CLIP learns through its **contrastive training objective**, and it’s the reason it generalizes so well to new, open-ended prompts.
 </details>
 
+
+**Q2. CLIP’s representations now power systems like DALL·E and GPT-4V. If CLIP learns directly from the internet, how might that shape what these models can or cannot “imagine”?**
+
+→ *What kinds of biases or limitations might emerge when a model’s understanding of the world comes entirely from online data?*
+<details>
+<summary>💡 Reveal Answer</summary>
+
+CLIP enables generative systems like DALL·E and GPT-4V to “imagine” visual scenes from text by grounding both modalities in the same embedding space.  
+However, because CLIP’s training data comes from the internet, its imagination is **bounded by what people have chosen to post and describe online.**
+
+This means CLIP can combine existing ideas in creative ways — like “a cat wearing sunglasses” — but it may **struggle with underrepresented or culturally specific concepts.**  
+In short, CLIP gave AI the ability to link vision and language, but not necessarily the ability to invent beyond the scope of human data.
+
+</details>
 
 ---
 
