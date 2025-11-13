@@ -67,7 +67,7 @@ This alignment is achieved through a **contrastive loss** objective — bringing
 </p>
 
 <p align="center">
-  <img src="figures/clip2.png" width="100%">
+  <img src="figures/clip2.jpg" width="100%">
 </p>
 
 ---
